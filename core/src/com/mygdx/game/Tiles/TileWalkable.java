@@ -8,6 +8,8 @@ import com.mygdx.game.TextureManager;
 
 public class TileWalkable extends ATile {
     TileWalkable(float gridX, float gridY){
-        super(TextureManager.getInstance().getTileTexture(), gridX, gridY);
+        super(TextureManager.getInstance().getTileTexture(), gridX, gridY, 2);
     }
+
+
 }

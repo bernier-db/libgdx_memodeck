@@ -11,7 +11,7 @@ public final class TextureManager {
     private TextureManager(){
         coin = new Texture("coin_sprite.png");
         tile = new Texture("tiles.png");
-        cards = new Texture("cards");
+        cards = new Texture("cards.png");
     }
 
     /**
@@ -26,4 +26,9 @@ public final class TextureManager {
     public Texture getTileTexture(){return tile;}
     public Texture getCardsTexture(){return cards;}
 
+    public void dispose() {
+        coin.dispose();
+        tile.dispose();
+        cards.dispose();
+    }
 }
