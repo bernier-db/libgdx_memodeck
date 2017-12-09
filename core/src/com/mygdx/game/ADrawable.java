@@ -42,7 +42,10 @@ public abstract class ADrawable {
 
     public abstract void display(Batch batch);
 
-    static Vector2 ScreenToGrid (Vector2 v){return ScreenToGrid(v.x, v.y);}
+    static Vector2 ScreenToGrid (Vector2 v){
+        Vector2 temp = ScreenToGrid(v.x, v.y);
+        return temp;
+    }
 
     static Vector2 ScreenToGrid(float x, float y) {
         float _x = 0, _y = 0;
@@ -50,7 +53,8 @@ public abstract class ADrawable {
         _x = (x / (Constants.TILE_W_DRAW/2) + y / (Constants.TILE_SURFACE_H_DRAW/2)) /2;
         _y = (y / (Constants.TILE_SURFACE_H_DRAW/2) - x / (Constants.TILE_W_DRAW/2)) /2;
 
-        return new Vector2( Math.round( _x * 10 ) / 10, Math.round( _y * 10 ) / 10);
+        Vector2 vec = new Vector2( Math.round( _x * 10 ) / 10f, Math.round( _y * 10 ) / 10f);
+        return vec;
     }
 
     static Vector2 GridToScreen(Vector2 v) {

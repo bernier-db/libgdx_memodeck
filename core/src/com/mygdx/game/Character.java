@@ -25,8 +25,8 @@ public class Character extends ADrawable {
 
     public Character(float gridx, float gridy){
         super(null, gridx, gridy, CoordType.grid);
-        maxSpeed = 10;
-        maxForce = 0.5f;
+        maxSpeed = 5;
+        maxForce = 0.05f;
         Vel = new Vector2(0,0);
         Acc = new Vector2(0, 0);
         destination = new Vector2(gridx, gridy);
@@ -61,18 +61,19 @@ public class Character extends ADrawable {
                 this.destination.x += cur.getDist();
                 break;
         }
-        if (this.destination.y > Board.height-1) this.destination.y = Board.height-1;
+        if (this.destination.y > Board.height-1) this.destination.y = Board.height-1.5f;
         else if (this.destination.y < 0)
-            this.destination.y = 0;
-        if (this.destination.x > Board.width-1) this.destination.x = Board.width-1;
+            this.destination.y = 0.5f;
+        if (this.destination.x > Board.width-1) this.destination.x = Board.width-1.5f;
         else if (this.destination.x < 0)
-            this.destination.x = 0;
+            this.destination.x = 0.5f;
     }
 
 
     public void update(){
-        if(Cards != null && isAtDestination() &&  Cards.size() > 0)
+        if(Cards != null && isAtDestination() &&  Cards.size() > 0) {
             applyCard(Cards);
+        }
 
         move();
 
@@ -80,7 +81,9 @@ public class Character extends ADrawable {
         Acc.setZero();
         this.Vel.limit(this.maxSpeed);
         Absolute_location.add(Vel);
-        Grid_location = ADrawable.ScreenToGrid(Absolute_location);
+        Vector2 temp = ADrawable.ScreenToGrid(Absolute_location);
+        Grid_location.x = temp.x;
+        Grid_location.y = temp.y;
     }
 
     private void move() {

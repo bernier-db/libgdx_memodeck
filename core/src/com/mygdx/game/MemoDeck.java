@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Logger;
 import com.mygdx.game.Cards.ACard;
 import com.mygdx.game.Cards.CardManager;
 import com.mygdx.game.Cards.DirectionCard;
@@ -20,6 +21,11 @@ public class MemoDeck extends ApplicationAdapter {
     ArrayList<DirectionCard> Cards;
     Button button;
     ArrayList<DirectionCard> Selected;
+    ArrayList<Coin> Coins = new ArrayList<Coin>();
+    boolean isAnim = false;
+    boolean isOver = false;
+    int curRound;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -29,39 +35,51 @@ public class MemoDeck extends ApplicationAdapter {
         Selected = new ArrayList<DirectionCard>();
         float w = Board.width * Constants.TILE_W_DRAW;
         button = new Button(0, (float)ACard.h);
+        curRound = Constants.MAX_ROUND - Constants.ROUNDS_LEFT;
 
-        PickCards();
+        CreateCoins();
+
 
         Gdx.input.setInputProcessor(new InputAdapter() {
-
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 handleClick(screenX, screenY);
                 return true;
             }
         });
+        PickCards();
     }
 
     public void update() {
-        button.setEnable(Selected.size() == 2);
-        perso.update();
+
+            button.setEnable(Selected.size() - 2 * curRound == 2);
+            perso.update();
+            for(Coin c : Coins){
+                c.update();
+            }
     }
 
     @Override
-    public void render() {
+    public void render(){
+        if(!isOver) {
+            update();
 
-        update();
-
-        drawBackground();
-        batch.begin();
-        drawBoard(batch);
-        batch.end();
-        //draw cards
-        for(int i=0; i<Cards.size(); i++){
-            ((DirectionCard)Cards.get(i)).drawIfSelected();
+            drawBackground();
+            batch.begin();
+            drawBoard(batch);
+            for(Coin c : Coins){
+                c.display(batch);
+            }
+            batch.end();
+            //draw cards
+            for (int i = 0; i < Cards.size(); i++) {
+                Cards.get(i).drawIfSelected();
+            }
+            perso.display(batch);
+            button.display(batch);
+        } else {
+            ManageEnd();
         }
-        perso.display(batch);
-        button.display(batch);
     }
 
     void drawBackground(){
@@ -93,16 +111,21 @@ public class MemoDeck extends ApplicationAdapter {
     }
 
     private void handleClick(int x, int y){
-        y = Constants.HEIGHT - y;
+        if(Constants.ROUNDS_LEFT == 0)
+            return;
 
+        y = Constants.HEIGHT - y;
+        curRound = Constants.MAX_ROUND - Constants.ROUNDS_LEFT;
+        //Bouton
         if(button.isEnabled() && button.handleClick(x,y)){
             confirmRound();
             return;
         }
-
+        //Cartes
         for(int i = 0; i < Cards.size(); i++){
             DirectionCard current = Cards.get(i);
-            if(current.handleClick(x, y, Selected.size())){
+
+            if(current.handleClick(x, y, Selected.size() - 2*curRound)){
                 if(current.isSelected()){
                     Selected.add(current);
                 } else {
@@ -115,7 +138,25 @@ public class MemoDeck extends ApplicationAdapter {
 
     void confirmRound(){
 
-        perso.applyCard((ArrayList<DirectionCard>)Selected);
+        if(Constants.ROUNDS_LEFT == 1)
+            perso.applyCard(Selected);
+        else {
+            PickCards();
+        }
+        Constants.ROUNDS_LEFT--;
+        curRound = Constants.MAX_ROUND - Constants.ROUNDS_LEFT;
+    }
+
+    void ManageEnd(){
+        Gdx.app.log("MemoDeck", "Managing end");
+    }
+
+    void CreateCoins(){
+        Gdx.app.log("MemoDeck", "Creating Coins");
+        int x = 0, y = 0;
+        for(int i = 0; i < 10/*Constants.NB_COINS*/; i++){
+            Coins.add(new Coin((float)i+0.5f, 0.5f));
+        }
     }
 
 }

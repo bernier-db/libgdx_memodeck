@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Logger;
 
 /**
  * Created by berni on 2017-11-20.
@@ -20,6 +21,9 @@ public class Constants {
     public final static int TILE_H_DRAW = TILE_W_DRAW * TILE_H / TILE_W;
     public final static int TILE_SURFACE_H_DRAW = TILE_W_DRAW / 2;
 
+    public final static int MAX_ROUND = 3;
+    public static int ROUNDS_LEFT = 3;
+    public final static int NB_COINS = 20;
 
     static public final float map(float value, float istart, float istop, float ostart, float ostop) {
         return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
