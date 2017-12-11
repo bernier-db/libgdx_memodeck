@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,9 +17,12 @@ public class Button extends ADrawable {
 
     boolean enable;
     float text_y;
+    String text;
     static float padding_bottom = 5;
-    Button(float x, float y){
+
+    Button(float x, float y, String text){
         super(null, x, y + padding_bottom, CoordType.abs);
+        this.text = text;
         w = Constants.WIDTH;
         h = Constants.HEIGHT / 15;
         text_y = Absolute_location.y + h;
@@ -29,10 +33,9 @@ public class Button extends ADrawable {
     public void setEnable(boolean b){enable = b;}
 
     public boolean handleClick(int x, int y) {
-        if(Constants.isClicked(Absolute_location.x, Absolute_location.y+h/2, w, h, x, y)){
-            return true;
-        }
-        return false;
+        Gdx.app.log("Clicked:", String.format("x: %d, y: %d",x,y));
+        Gdx.app.log("Btn attribute:", String.format("x: %.2f, y: %.2f, w:%.2f, h:%.2f",Absolute_location.x,Absolute_location.y, w,h));
+        return Constants.isClicked(Absolute_location.x, Absolute_location.y, w, h, x, y);
     }
 
     @Override
@@ -53,7 +56,7 @@ public class Button extends ADrawable {
         txt.getData().setScale(2f);
         txt.getData().setLineHeight(h);
         batch.begin();
-        txt.draw(batch, "Confirm", Absolute_location.x, text_y - (h - txt.getXHeight())/2, (float)Constants.WIDTH, Align.center, true);
+        txt.draw(batch, text, Absolute_location.x, text_y - (h - txt.getXHeight())/2, (float)Constants.WIDTH, Align.center, true);
         batch.end();
 
     }

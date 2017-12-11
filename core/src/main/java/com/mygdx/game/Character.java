@@ -9,6 +9,8 @@ import com.mygdx.game.Cards.DirectionCard;
 
 import java.util.ArrayList;
 
+import javax.print.attribute.standard.Destination;
+
 /**
  * Created by berni on 2017-11-16.
  */
@@ -25,7 +27,7 @@ public class Character extends ADrawable {
 
     public Character(float gridx, float gridy){
         super(null, gridx, gridy, CoordType.grid);
-        maxSpeed = 5;
+        maxSpeed = 3;
         maxForce = 0.05f;
         Vel = new Vector2(0,0);
         Acc = new Vector2(0, 0);
@@ -61,16 +63,16 @@ public class Character extends ADrawable {
                 this.destination.x += cur.getDist();
                 break;
         }
-        if (this.destination.y > Board.height-1) this.destination.y = Board.height-1.5f;
+        if (this.destination.y > Board.height-1) this.destination.y = Board.height-0.5f;
         else if (this.destination.y < 0)
             this.destination.y = 0.5f;
-        if (this.destination.x > Board.width-1) this.destination.x = Board.width-1.5f;
+        if (this.destination.x > Board.width-1) this.destination.x = Board.width-0.5f;
         else if (this.destination.x < 0)
             this.destination.x = 0.5f;
     }
 
 
-    public void update(){
+    public void update(ArrayList<Coin> coins){
         if(Cards != null && isAtDestination() &&  Cards.size() > 0) {
             applyCard(Cards);
         }
@@ -81,13 +83,15 @@ public class Character extends ADrawable {
         Acc.setZero();
         this.Vel.limit(this.maxSpeed);
         Absolute_location.add(Vel);
-        Vector2 temp = ADrawable.ScreenToGrid(Absolute_location);
+        Vector2 temp = ScreenToGrid(Absolute_location);
         Grid_location.x = temp.x;
         Grid_location.y = temp.y;
+
+        verifCoin(coins);
     }
 
     private void move() {
-        Vector2 target = ADrawable.GridToScreen(this.destination);
+        Vector2 target = GridToScreen(this.destination);
         desired = target.cpy().sub(Absolute_location);
 
         float d = desired.len();
@@ -112,17 +116,42 @@ public class Character extends ADrawable {
 
     @Override
     public void display(Batch batch){
+
         Gdx.gl.glLineWidth(2);
         s.begin(ShapeRenderer.ShapeType.Filled);
         s.setColor(0,0,1,1);
-        s.circle(this.Absolute_location.x + Constants.WIDTH/2, this.Absolute_location.y + Constants.OFFSET_Y + Constants.TILE_SURFACE_H_DRAW/2, (float)Math.PI*2);
+        s.circle(this.Absolute_location.x + Constants.WIDTH/2, this.Absolute_location.y + Constants.OFFSET_Y + Constants.TILE_SURFACE_H_DRAW/2, Constants.TILE_W/12);
         s.end();
         s.begin(ShapeRenderer.ShapeType.Line);
         s.setColor(0,0,0,1);
-        s.circle(this.Absolute_location.x + Constants.WIDTH/2, this.Absolute_location.y + Constants.OFFSET_Y + Constants.TILE_SURFACE_H_DRAW/2, (float)Math.PI*2);
+        s.circle(this.Absolute_location.x + Constants.WIDTH/2, this.Absolute_location.y + Constants.OFFSET_Y + Constants.TILE_SURFACE_H_DRAW/2, Constants.TILE_W/12);
         s.end();
+    }
+    private void verifCoin( ArrayList<Coin> coins){
+
+        Coin c;
+        for (int i =0; i < coins.size(); i++){
+            c = coins.get(i);
+            if (Math.round(this.Grid_location.x) == Math.round(c.Grid_location.x) &&
+                    Math.round(this.Grid_location.y) == Math.round(c.Grid_location.y)) {
+                Config.POINTS++;
+                coins.remove(i);
+                break;
+            }
+        }
     }
 
 
     public Vector2 getGridLocation(){return Grid_location;}
+
+    public void reset() {
+        Grid_location.x = 0.5f;
+        Grid_location.y = 0.5f;
+        Absolute_location = GridToScreen(Grid_location);
+        destination.x = Grid_location.x;
+        destination.y = Grid_location.y;
+        Vel.scl(0);
+        Acc.scl(0);
+        Cards = null;
+    }
 }

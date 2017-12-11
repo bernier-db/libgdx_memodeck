@@ -21,7 +21,7 @@ public class DirectionCard extends ACard {
     Direction dir;
     int dist;
     int pos;
-    DirectionCard(int pos, int dist, int dir){
+    public DirectionCard(int pos, int dist, int dir){
         super(0, 0, CoordType.abs);
         this.dist = dist;
         this.pos = pos;

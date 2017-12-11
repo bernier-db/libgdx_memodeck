@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2D;
 
 /**
  * Created by berni on 2017-11-16.
@@ -13,17 +12,20 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 
 public abstract class ADrawable {
     public enum CoordType {abs, grid}
-    public static ShapeRenderer s = new ShapeRenderer();
+    public static ShapeRenderer s;
     protected Vector2 Absolute_location;
     protected Vector2 Grid_location;
     protected float h;
     protected float w;
     protected Texture texture;
-    protected BitmapFont txt;
+    public static BitmapFont txt;
 
     public ADrawable(Texture t, float x, float y, CoordType coordType) {
         this.texture = t;
-        txt = new BitmapFont();
+        if(this.s==null)
+            this.s = new ShapeRenderer();
+        if(this.txt==null)
+            this.txt = new BitmapFont();
 
         switch (coordType) {
             case grid:
